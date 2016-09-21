@@ -5,6 +5,7 @@ package sysc3303;
 //UDP/IP. The server receives a read or write packet from a client and
 //sends back the appropriate response without any actual file transfer.
 //One socket (69) is used to receive (it stays open) and another for each response. 
+//based on SampleSolution for assignment1 given the Sept 19th,2016
 
 import java.io.*; 
 import java.net.*;
@@ -62,23 +63,10 @@ public void receiveAndSendTFTP() throws Exception
          System.exit(1);
       }
 
-      // Process the received datagram.
-      System.out.println("Server: Packet received:");
-      System.out.println("From host: " + receivePacket.getAddress());
-      System.out.println("Host port: " + receivePacket.getPort());
-      len = receivePacket.getLength();
-      System.out.println("Length: " + len);
-      System.out.println("Containing: " );
+      printInformation(receivePacket,"Server",1);
       
-      // print the bytes
-      for (j=0;j<len;j++) {
-         System.out.println("byte " + j + " " + data[j]);
-      }
-
-      // Form a String from the byte array.
-      String received = new String(data,0,len);
-      System.out.println(received);
-
+      len = receivePacket.getLength();
+      
       // If it's a read, send back DATA (03) block 1
       // If it's a write, send back ACK (04) block 0
       // Otherwise, ignore it
@@ -140,16 +128,8 @@ public void receiveAndSendTFTP() throws Exception
       sendPacket = new DatagramPacket(response, response.length,
                             receivePacket.getAddress(), receivePacket.getPort());
 
-      System.out.println("Server: Sending packet:");
-      System.out.println("To host: " + sendPacket.getAddress());
-      System.out.println("Destination host port: " + sendPacket.getPort());
-      len = sendPacket.getLength();
-      System.out.println("Length: " + len);
-      System.out.println("Containing: ");
-      for (j=0;j<len;j++) {
-         System.out.println("byte " + j + " " + response[j]);
-      }
-
+      printInformation(sendPacket,"Server",0);
+     
       // Send the datagram packet to the client via a new socket.
 
       try {

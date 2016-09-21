@@ -6,7 +6,8 @@ package sysc3303;
 //passes it on to the server.  Upon receiving a response, it passes it on to the 
 //client.
 //One socket (23) is used to receive from the client, and another to send/receive
-//from the server.  A new socket is used for each communication back to the client.   
+//from the server.  A new socket is used for each communication back to the client.  
+//based on SampleSolution for assignment1 given the Sept 19th,2016
 
 import java.io.*;
 import java.net.*; 
@@ -57,25 +58,11 @@ public void passOnTFTP()
          e.printStackTrace();
          System.exit(1);
       }
-
-      // Process the received datagram.
-      System.out.println("Simulator: Packet received:");
-      System.out.println("From host: " + receivePacket.getAddress());
-      clientPort = receivePacket.getPort();
-      System.out.println("Host port: " + clientPort);
-      len = receivePacket.getLength();
-      System.out.println("Length: " + len);
-      System.out.println("Containing: " );
       
-      // print the bytes
-      for (j=0;j<len;j++) {
-         System.out.println("byte " + j + " " + data[j]);
-      }
-
-      // Form a String from the byte array, and print the string.
-      String received = new String(data,0,len);
-      System.out.println(received);
-      
+      printInformation(receivePacket,"Simulator",1);
+      len=receivePacket.getLength();
+      clientPort=receivePacket.getPort();
+            
       // Now pass it on to the server (to port 69)
       // Construct a datagram packet that is to be sent to a specified port
       // on a specified host.
@@ -93,15 +80,9 @@ public void passOnTFTP()
       sendPacket = new DatagramPacket(data, len,
                                      receivePacket.getAddress(), 69);
      
-      System.out.println("Simulator: sending packet.");
-      System.out.println("To host: " + sendPacket.getAddress());
-      System.out.println("Destination host port: " + sendPacket.getPort());
+      printInformation(sendPacket,"Simulator",0);
       len = sendPacket.getLength();
-      System.out.println("Length: " + len);
-      System.out.println("Containing: ");
-      for (j=0;j<len;j++) {
-          System.out.println("byte " + j + " " + data[j]);
-      }
+      
 
       // Send the datagram packet to the server via the send/receive socket.
 
@@ -127,16 +108,9 @@ public void passOnTFTP()
          System.exit(1);
       }
 
-      // Process the received datagram.
-      System.out.println("Simulator: Packet received:");
-      System.out.println("From host: " + receivePacket.getAddress());
-      System.out.println("Host port: " + receivePacket.getPort());
+      printInformation(receivePacket,"Simulator",1);
       len = receivePacket.getLength();
-      System.out.println("Length: " + len);
-      System.out.println("Containing: ");
-      for (j=0;j<len;j++) {
-         System.out.println("byte " + j + " " + data[j]);
-      }
+      
 
       // Construct a datagram packet that is to be sent to a specified port
       // on a specified host.
@@ -159,16 +133,9 @@ public void passOnTFTP()
       sendPacket = new DatagramPacket(data, receivePacket.getLength(),
                             receivePacket.getAddress(), clientPort);
 
-      System.out.println( "Simulator: Sending packet:");
-      System.out.println("To host: " + sendPacket.getAddress());
-      System.out.println("Destination host port: " + sendPacket.getPort());
+      printInformation(sendPacket,"Simulator",0);
       len = sendPacket.getLength();
-      System.out.println("Length: " + len);
-      System.out.println("Containing: ");
-      for (j=0;j<len;j++) {
-         System.out.println("byte " + j + " " + data[j]);
-      }
-
+     
       // Send the datagram packet to the client via a new socket.
 
       try {

@@ -19,13 +19,14 @@ public class TFTPHost {
 		
 	 }
 	 
-	 protected void printInformation(DatagramPacket s, String who, String host, int action){
+	 protected void printInformation(DatagramPacket s, String who, int action){//action=0 for Sending
 		 
+		//action=0 for Sending and =1 for receiving 
 		// Process the received datagram.
 		 
 		 System.out.println("\n"+who+": "+infoText[action][1]);
-    System.out.println(infoText[action][0]+ host+": " + s.getAddress());
-    System.out.println(host+" port: " + s.getPort());
+    System.out.println(infoText[action][0]+ " host: " + s.getAddress());
+    System.out.println("Host port: " + s.getPort());
     int len = s.getLength();
     System.out.println("Length: " + len);
     System.out.print("Containing: string:");

@@ -3,12 +3,13 @@ package sysc3303;
 //TFTPClient.java
 //This class is the client side for a very simple assignment based on TFTP on
 //UDP/IP. The client uses one port and sends a read or write request and gets 
-//the appropriate response from the server.  No actual file transfer takes place.   
+//the appropriate response from the server.  No actual file transfer takes place.
+//based on SampleSolution for assignment1 given the Sept 19th,2016
 
 import java.io.*;
 import java.net.*;
 
-public class TFTPClient {
+public class TFTPClient extends TFTPHost{
 
 private DatagramPacket sendPacket, receivePacket;
 private DatagramSocket sendReceiveSocket;
@@ -123,19 +124,8 @@ public void sendAndReceive()
       System.exit(1);
    }
 
-   System.out.println("Client: sending packet " + i + ".");
-   System.out.println("To host: " + sendPacket.getAddress());
-   System.out.println("Destination host port: " + sendPacket.getPort());
-   len = sendPacket.getLength();
-   System.out.println("Length: " + len);
-   System.out.println("Containing: ");
-   for (j=0;j<len;j++) {
-       System.out.println("byte " + j + " " + msg[j]);
-   }
+   printInformation(sendPacket, "Client",0);
    
-   // Form a String from the byte array, and print the string.
-   String sending = new String(msg,0,len);
-   System.out.println(sending);
 
    // Send the datagram packet to the server via the send/receive socket.
 
@@ -163,17 +153,8 @@ public void sendAndReceive()
       System.exit(1);
    }
 
-   // Process the received datagram.
-   System.out.println("Client: Packet received:");
-   System.out.println("From host: " + receivePacket.getAddress());
-   System.out.println("Host port: " + receivePacket.getPort());
-   len = receivePacket.getLength();
-   System.out.println("Length: " + len);
-   System.out.println("Containing: ");
-   for (j=0;j<len;j++) {
-       System.out.println("byte " + j + " " + data[j]);
-   }
-   
+   printInformation(receivePacket,"Client",1);
+      
    System.out.println();
 
  } // end of loop
