@@ -16,20 +16,21 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
-public class TFTPServerListener  {
+public class TFTPServerListener extends TFTPHost {
 
 	// UDP datagram packets and sockets used to send / receive
 	private DatagramPacket receivePacket;
 	private DatagramSocket receiveSocket;
 	
 	//timeout
-	private final int tOut=10000;//10 sec
+	private final int tOut=300;//10 sec
 	
 	//status (shutdown or not)
 	private boolean status;
 	
 	public TFTPServerListener()
 	{
+		super();
 	   try {
 	      // Construct a datagram socket and bind it to port 69
 	      // on the local host machine. This socket will be used to
@@ -83,20 +84,20 @@ public class TFTPServerListener  {
 	}
 	
 	public void checkStat(){
-		boolean stat=getStatus();
-		if (stat){
+		
+		if (shutdown){
 			System.out.println("ServerListener shutdown , no more file transfer request possible");
 			//maybe need to wait all the thread to end? 
 			System.exit(1);
 		}
 		
 	}
-	public void setStatus(boolean newStat){
-		this.status=newStat;
-	}
 	
-	public boolean getStatus(){
-		return status;
+	public static void main( String args[] ) throws Exception
+	{
+	   TFTPServerListener c = new TFTPServerListener(); 
+	   c.Listen();
+	   
 	}
 	
 	

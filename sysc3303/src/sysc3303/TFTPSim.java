@@ -16,11 +16,12 @@ import java.net.*;
 public class TFTPSim extends TFTPHost {
 
 // UDP datagram packets and sockets used to send / receive
-private DatagramPacket sendPacket, receivePacket;
+
 private DatagramSocket receiveSocket, sendSocket, sendReceiveSocket;
 
 public TFTPSim()
 {
+	super();
    try {
       // Construct a datagram socket and bind it to port 23
       // on the local host machine. This socket will be used to
@@ -59,7 +60,7 @@ public void passOnTFTP()
          System.exit(1);
       }
       
-      printInformation(receivePacket,"Simulator",1);
+      printIncomingInfo(receivePacket,"Simulator",verbose);
       len=receivePacket.getLength();
       clientPort=receivePacket.getPort();
             
@@ -80,7 +81,7 @@ public void passOnTFTP()
       sendPacket = new DatagramPacket(data, len,
                                      receivePacket.getAddress(), 69);
      
-      printInformation(sendPacket,"Simulator",0);
+      printOutgoingInfo(sendPacket,"Simulator",verbose);
       len = sendPacket.getLength();
       
 
@@ -108,7 +109,7 @@ public void passOnTFTP()
          System.exit(1);
       }
 
-      printInformation(receivePacket,"Simulator",1);
+      printIncomingInfo(receivePacket,"Simulator",verbose);
       len = receivePacket.getLength();
       
 
@@ -133,7 +134,7 @@ public void passOnTFTP()
       sendPacket = new DatagramPacket(data, receivePacket.getLength(),
                             receivePacket.getAddress(), clientPort);
 
-      printInformation(sendPacket,"Simulator",0);
+      printOutgoingInfo(sendPacket,"Simulator",verbose);
       len = sendPacket.getLength();
      
       // Send the datagram packet to the client via a new socket.
