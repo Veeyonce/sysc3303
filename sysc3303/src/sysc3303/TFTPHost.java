@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import sysc3303.TFTPServerHandler.Request;
+
 public class TFTPHost {
 	
 	
@@ -238,10 +240,34 @@ public class TFTPHost {
 		}
 	}
 	
-	//this probs matches invalid strings but so does the sample...
+	//this function check if a paket is valid : ACK or DATA packet only for now on . RRQ and WRQ checked on ServerHandler
 		public static boolean validate(DatagramPacket receivePacket) {
-			String data = new String(receivePacket.getData(),0,receivePacket.getLength());
-			return Pattern.matches("^\0(((\001|\002).+\0(([oO][cC][tT][eE][tT])|([nN][eE][tT][aA][sS][cC][iI][iI]))\0)|(\004(.|\012|\015)(.|\012|\015))|(\003(.|\012|\015){2,}))$", data);
+			byte[] data=receivePacket.getData();
+			boolean rep;
+			
+			if (data[0]!=0) rep=false; // bad
+			//check for data packet 
+		    else if (data[1]==(byte)3) {
+		    	if (receivePacket.getLength()<4 || receivePacket.getLength()>516){
+		    		rep=false;
+		    	}
+		    	else{
+		    		rep=true;
+		    	}
+		    }
+			//check for ack packet 04+block number 
+		    else if (data[1]==(byte)4){
+		    	if (receivePacket.getLength()!= 4 ){
+		    		rep=false;
+		    	}
+		    	else{
+		    		rep=true;
+		    	}
+		    }
+		    else {
+		    	rep=false;
+		    }
+			return rep;
 		}
 
 }
