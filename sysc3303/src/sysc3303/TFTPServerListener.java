@@ -22,7 +22,7 @@ public class TFTPServerListener extends TFTPHost {
     private DatagramSocket receiveSocket;
 
     //timeout
-    private final int tOut=300;//10 sec
+    private final int tOut=10000;//10 sec
 
     //status (shutdown or not)
     private boolean status;
@@ -67,13 +67,13 @@ public class TFTPServerListener extends TFTPHost {
             } catch (InterruptedIOException t){
                 //no request is received during tOut, the listener check the shutdown command.
                 System.out.println("No file transfer requested");
-                checkStat();
+                //checkStat();
             }catch (IOException e) {
                 e.printStackTrace();
                 System.exit(1);
             } 
             // Before creating a new thread, check if shutdown has been intitiated or not. 
-            checkStat();
+            //checkStat();
             // create a new thread to handle the file transfer request
             Thread handler=new Thread(new TFTPServerHandler(receivePacket));
             handler.start();

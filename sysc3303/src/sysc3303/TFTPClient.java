@@ -110,7 +110,7 @@ public class TFTPClient extends TFTPHost{
                     while (timeout) {
                         timeout = false;
                         try {
-                            sendReceiveSocket.setSoTimeout(300);
+                            sendReceiveSocket.setSoTimeout(10000);
                             sendReceiveSocket.receive(receivePacket);
                         } catch (SocketTimeoutException e) {
                             timeout = true;
@@ -149,8 +149,7 @@ public class TFTPClient extends TFTPHost{
 
                 }
                 catch (IOException e) {
-                    e.printStackTrace();
-                }
+                    e.printStackTrace();                }
             }
             printIncomingInfo(receivePacket,"Client",verbose);
 
