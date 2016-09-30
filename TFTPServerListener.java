@@ -5,9 +5,6 @@
 //Before waiting again a new request the listener check the shutdown command(status)
 //If no request is received during tOut, the listener check the shutdown command.
 
-/*error code : 05 opcode : 01=filenotfound/02=access violation /03=disk full  or allocation exceed/04=file already exists
- * + force to happen no error sim , opcode +errorcode + usefull message +0 byte and stop*/
-
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.DatagramPacket;
