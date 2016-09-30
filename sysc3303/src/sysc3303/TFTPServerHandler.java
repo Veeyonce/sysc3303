@@ -47,7 +47,7 @@ public class TFTPServerHandler extends TFTPHost implements Runnable {
 
         Request req; // READ, WRITE or ERROR
 
-        String filename, mode;
+        String mode;
         int len, j=0, k=0;
 
         //can be replace by validate message                    
@@ -143,7 +143,7 @@ public class TFTPServerHandler extends TFTPHost implements Runnable {
         else {
             read();
         }
-
+        System.out.println("File transfer finished");
         sendReceiveSocket.close();
     } 
 
@@ -161,10 +161,10 @@ public class TFTPServerHandler extends TFTPHost implements Runnable {
     }
 
     public void write() {
-        filename = "copy".concat(filename); //appends copy because everything's in the same folder on the same computer right now
+        String newfile = "copy"+(filename); //appends copy because everything's in the same folder on the same computer right now
         BufferedOutputStream out;
         try {
-            out = new BufferedOutputStream(new FileOutputStream(filename));
+            out = new BufferedOutputStream(new FileOutputStream(newfile));
             sendReceiveSocket.send(sendPacket);
             super.write(out, sendReceiveSocket);
         } catch (IOException e) {

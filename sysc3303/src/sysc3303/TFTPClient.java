@@ -99,7 +99,8 @@ public class TFTPClient extends TFTPHost{
 
         System.out.println("Client: Packet sent.");
 
-       
+       //reset timetout
+        timeout=true;
         
         // Process the received datagram.
         while(!shutdown){
@@ -119,11 +120,14 @@ public class TFTPClient extends TFTPHost{
                             }
                         }
                     }
+                    printIncomingInfo(receivePacket,"Client",verbose);
                     if (resp[0]==(byte)0 && resp[1]==(byte)4 && resp[2]==(byte)0 && resp[3]==(byte)0){
                         //ACK 0 received 
                         	sendPort = receivePacket.getPort();
+                        	System.out.println(System.getProperty("user.dir"));
                             BufferedInputStream in = new BufferedInputStream(new FileInputStream(filename));
                             read(in,sendReceiveSocket,sendPort, (byte)requestFormatRead);
+                            timeout = false;
                             in.close();
                     }
                     else {//Server didn't answer correctly
@@ -151,9 +155,9 @@ public class TFTPClient extends TFTPHost{
                 catch (IOException e) {
                     e.printStackTrace();                }
             }
-            printIncomingInfo(receivePacket,"Client",verbose);
+            
 
-            System.out.println();
+            promptUser();
 
         } // end of loop
 
