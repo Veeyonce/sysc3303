@@ -1,4 +1,4 @@
-
+package sysc3303;
 //TFTPServerHandler.java
 //This class represents the thread that handle file transfer for the server based on
 //UDP/IP. This thread receive a read or write packet from a client and
