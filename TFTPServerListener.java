@@ -1,12 +1,9 @@
-package sysc3303;
+
 //TFTPServerListener.java
 //This class is the listener process of the server. The Listener use only one socket (69) and wait for any request.
 //Once a request is received the listener create a new thread to handle the request.
 //Before waiting again a new request the listener check the shutdown command(status)
 //If no request is received during tOut, the listener check the shutdown command.
-
-/*error code : 05 opcode : 01=filenotfound/02=access violation /03=disk full  or allocation exceed/04=file already exists
- * + force to happen no error sim , opcode +errorcode + usefull message +0 byte and stop*/
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -22,7 +19,7 @@ public class TFTPServerListener extends TFTPHost {
     private DatagramSocket receiveSocket;
 
     //timeout
-    private final int tOut=10000;//10 sec
+    private final int tOut=300;//10 sec
 
     //status (shutdown or not)
     private boolean status;
@@ -67,13 +64,13 @@ public class TFTPServerListener extends TFTPHost {
             } catch (InterruptedIOException t){
                 //no request is received during tOut, the listener check the shutdown command.
                 System.out.println("No file transfer requested");
-                //checkStat();
+                checkStat();
             }catch (IOException e) {
                 e.printStackTrace();
                 System.exit(1);
             } 
             // Before creating a new thread, check if shutdown has been intitiated or not. 
-            //checkStat();
+            checkStat();
             // create a new thread to handle the file transfer request
             Thread handler=new Thread(new TFTPServerHandler(receivePacket));
             handler.start();

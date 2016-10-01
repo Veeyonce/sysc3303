@@ -1,4 +1,4 @@
-package sysc3303;
+
 //TFTPServerHandler.java
 //This class represents the thread that handle file transfer for the server based on
 //UDP/IP. This thread receive a read or write packet from a client and
@@ -47,7 +47,7 @@ public class TFTPServerHandler extends TFTPHost implements Runnable {
 
         Request req; // READ, WRITE or ERROR
 
-        String mode;
+        String filename, mode;
         int len, j=0, k=0;
 
         //can be replace by validate message                    
@@ -143,7 +143,7 @@ public class TFTPServerHandler extends TFTPHost implements Runnable {
         else {
             read();
         }
-        System.out.println("File transfer finished");
+
         sendReceiveSocket.close();
     } 
 
@@ -161,10 +161,10 @@ public class TFTPServerHandler extends TFTPHost implements Runnable {
     }
 
     public void write() {
-        String newfile = "copy"+(filename); //appends copy because everything's in the same folder on the same computer right now
+        filename = "copy".concat(filename); //appends copy because everything's in the same folder on the same computer right now
         BufferedOutputStream out;
         try {
-            out = new BufferedOutputStream(new FileOutputStream(newfile));
+            out = new BufferedOutputStream(new FileOutputStream(filename));
             sendReceiveSocket.send(sendPacket);
             super.write(out, sendReceiveSocket);
         } catch (IOException e) {

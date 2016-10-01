@@ -1,4 +1,4 @@
-package sysc3303;
+
 //TFTPClient.java
 //This class is the client side for a very simple assignment based on TFTP on
 //UDP/IP. The client uses one port and sends a read or write request and gets 
@@ -99,9 +99,21 @@ public class TFTPClient extends TFTPHost{
 
         System.out.println("Client: Packet sent.");
 
-       //reset timetout
-        timeout=true;
-        
+        // Construct a DatagramPacket for receiving packets up
+        // to 100 bytes long (the length of the byte array).
+
+        data = new byte[516];
+        receivePacket = new DatagramPacket(data, data.length);
+
+        System.out.println("Client: Waiting for packet.");
+        try {
+            // Block until a datagram is received via sendReceiveSocket.
+            sendReceiveSocket.receive(receivePacket);
+        } catch(IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+
         // Process the received datagram.
         while(!shutdown){
             if (type==WRITE) {
@@ -111,7 +123,7 @@ public class TFTPClient extends TFTPHost{
                     while (timeout) {
                         timeout = false;
                         try {
-                            sendReceiveSocket.setSoTimeout(10000);
+                            sendReceiveSocket.setSoTimeout(300);
                             sendReceiveSocket.receive(receivePacket);
                         } catch (SocketTimeoutException e) {
                             timeout = true;
@@ -120,21 +132,10 @@ public class TFTPClient extends TFTPHost{
                             }
                         }
                     }
-                    printIncomingInfo(receivePacket,"Client",verbose);
-                    if (resp[0]==(byte)0 && resp[1]==(byte)4 && resp[2]==(byte)0 && resp[3]==(byte)0){
-                        //ACK 0 received 
-                        	sendPort = receivePacket.getPort();
-                        	System.out.println(System.getProperty("user.dir"));
-                            BufferedInputStream in = new BufferedInputStream(new FileInputStream(filename));
-                            read(in,sendReceiveSocket,sendPort, (byte)requestFormatRead);
-                            timeout = false;
-                            in.close();
-                    }
-                    else {//Server didn't answer correctly
-                    	System.out.println("First Ack invalid, shutdown");
-                    	System.exit(0);
-                    }
-                    
+                    sendPort = receivePacket.getPort();
+                    BufferedInputStream in = new BufferedInputStream(new FileInputStream(filename));
+                    read(in,sendReceiveSocket,sendPort, requestFormatRead);
+                    in.close();
 
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
@@ -146,18 +147,18 @@ public class TFTPClient extends TFTPHost{
             else if (type==READ) {
                 filename = "copy".concat(filename); //avoid overwriting the existing file
                 try {
-                	
                     BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(filename));
                     write(out,sendReceiveSocket);
                     out.close();
 
                 }
                 catch (IOException e) {
-                    e.printStackTrace();                }
+                    e.printStackTrace();
+                }
             }
-            
+            printIncomingInfo(receivePacket,"Client",verbose);
 
-            promptUser();
+            System.out.println();
 
         } // end of loop
 
