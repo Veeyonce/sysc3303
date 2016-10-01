@@ -11,9 +11,4 @@ Group members:
 
  * * * TODO * * *
  
- 1. UML Class Diagrams
- 2. finish UCM diagrams
- 3. Testing different file size
- 4. quiet mode?
- 5. default directory?
- 6. final readme.txt (how to run project, how to run test files, responsibility breakdown)
+ 1. Fix final codes for submission tonight
