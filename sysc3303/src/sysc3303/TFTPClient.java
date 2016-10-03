@@ -239,28 +239,28 @@ public class TFTPClient extends TFTPHost{
 
     public static void main(String args[])
     {
-    	Scanner s = new Scanner(System.in);
+//    	Scanner s = new Scanner(System.in);
         TFTPClient c = new TFTPClient();
-        while(true) {
-        	System.out.println("------------------------------------------------------");
-        	System.out.println("File path selection: \n");
-			System.out.println("Enter the name of the file path for the Client to use (if * is typed then src/client/files/ will be used):");
+//        while(true) {
+//        	System.out.println("------------------------------------------------------");
+//       	System.out.println("File path selection: \n");
+//			System.out.println("Enter the name of the file path for the Client to use (if * is typed then src/client/files/ will be used):");
 			
-			c.filePath = s.next();
+//			c.filePath = s.next();
 			
-			if (c.filePath.trim().equals("*")) {
-				c.filePath = DEFAULT_FILE_PATH;
-			}
-			s.reset();
-			//Check that file path exists/is a valid directory
-			if (new File(c.filePath).isDirectory()) {
-				break;
-			} else {
-				System.out.println("File path does not exist or is not a directory, try again.");
-			}
-        }
+//			if (c.filePath.trim().equals("*")) {
+//				c.filePath = DEFAULT_FILE_PATH;
+//			}
+//			s.reset();
+//			//Check that file path exists/is a valid directory
+//			if (new File(c.filePath).isDirectory()) {
+//				break;
+//			} else {
+//				System.out.println("File path does not exist or is not a directory, try again.");
+//			}
+//        }
         c.promptUser();
-
+//       s.close();
     }
 }
 
