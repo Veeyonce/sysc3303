@@ -7,9 +7,7 @@ import java.io.*;
 //September 17th, 2016
 
 import java.net.*;
-import java.util.Arrays;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 import sysc3303.TFTPServerHandler.Request;
 
@@ -45,6 +43,9 @@ public class TFTPHost {
         if (y<0) {
             y = 256+y;
         }
+        System.out.println((int) x);
+        System.out.println("-");
+        System.out.println((int)y);
         return 256*x+y;
     }
 
@@ -148,12 +149,14 @@ public class TFTPHost {
                 
                 try {
                     sendReceiveSocket.send(sendPacket);
+                    System.out.print(sendPacket.getData());
                 } catch (IOException e) {
                     e.printStackTrace();
                     System.exit(1);
                 }
                 
                 printOutgoingInfo(sendPacket, this.toString(),verbose);
+                parseBlock(sendPacket.getData());
 
             } while (receivePacket.getLength()==516);
             out.close();
@@ -174,6 +177,7 @@ public class TFTPHost {
         byte block2 = 0;
         int numberblock=0;
         byte[] data = new byte[512];
+        byte[] resp = new byte[4];
         
         try {
             
@@ -210,15 +214,17 @@ public class TFTPHost {
                 
                 
                 
-                byte[] resp = new byte[4];
+               
                 receivePacket = new DatagramPacket(resp,4);
-                
+               
                 timeout = true;
                 while (timeout) {
                     timeout = false;
                     try {
                         //sendReceiveSocket.setSoTimeout(300);
+                    	//error packet number
                         sendReceiveSocket.receive(receivePacket);
+                        System.out.print(receivePacket.getData());
                         if (!validate(receivePacket)) {
                             System.out.print("Invalid packet.");
                             printIncomingInfo(receivePacket, "ERROR", true);
@@ -231,13 +237,13 @@ public class TFTPHost {
                         }
                     }
                 }
-                
+ 
                 printIncomingInfo(receivePacket, "Read", verbose);
                 
-                if (!(parseBlock(receivePacket.getData())==parseBlock(message))) {
-                    System.out.println("ERROR: Acknowledge does not match block sent "+ parseBlock(receivePacket.getData()) + "    "+ parseBlock(message));
-                    return;
-                }
+//                if (!(parseBlock(receivePacket.getData())==parseBlock(message))) {
+//                    System.out.println("ERROR: Acknowledge does not match block sent "+ parseBlock(receivePacket.getData()) + "    "+ parseBlock(message));
+//                    return;
+//                }
 
             }
             
@@ -248,7 +254,7 @@ public class TFTPHost {
         }
     }
 
-    //this function check if a paket is valid : ACK or DATA packet only for now on . RRQ and WRQ checked on ServerHandler
+    //this function check if a packet is valid : ACK or DATA packet only for now on . RRQ and WRQ checked on ServerHandler
     public static boolean validate(DatagramPacket receivePacket) {
         byte[] data=receivePacket.getData();
         boolean rep;

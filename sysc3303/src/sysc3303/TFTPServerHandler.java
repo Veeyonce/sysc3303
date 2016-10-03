@@ -119,20 +119,23 @@ public class TFTPServerHandler extends TFTPHost implements Runnable {
         //     datagram, and use that as the destination port for the TFTP
         //     packet.
 
-        sendPacket = new DatagramPacket(response, response.length,
-            receivePacket.getAddress(), receivePacket.getPort());
-
-        printOutgoingInfo(sendPacket,"Server",verbose);
-
-        try {
-            sendReceiveSocket.send(sendPacket);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
+        if (req==Request.WRITE) { 
+        	sendPacket = new DatagramPacket(response, response.length,
+	        receivePacket.getAddress(), receivePacket.getPort());
+	
+	        printOutgoingInfo(sendPacket,"Server",verbose);
+	
+	        try {
+	            sendReceiveSocket.send(sendPacket);
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            System.exit(1);
+	        }
+	
+	        System.out.println("Server: packet sent using port " + sendReceiveSocket.getLocalPort());
+	        System.out.println();
         }
-
-        System.out.println("Server: packet sent using port " + sendReceiveSocket.getLocalPort());
-        System.out.println();
+            
 
     }
 
