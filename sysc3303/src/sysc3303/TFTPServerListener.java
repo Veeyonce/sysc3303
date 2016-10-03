@@ -15,17 +15,19 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.*;
 
-public class TFTPServerListener extends TFTPHost {
+public class TFTPServerListener  extends Thread {
 
     // UDP datagram packets and sockets used to send / receive
     private DatagramPacket receivePacket;
     private DatagramSocket receiveSocket;
 
     //timeout
-    private final int tOut=10000;//10 sec
+    private final int tOut=100000;//10 sec
 
     //status (shutdown or not)
     private boolean status;
+    private boolean timeout;
+   
 
     public TFTPServerListener()
     {
@@ -47,14 +49,19 @@ public class TFTPServerListener extends TFTPHost {
         }
 
         status=false;
+        timeout=true;
 
     }
 
-    public void Listen(){
+    public void setStatus() {
+        status = true;
+    }
+    
+    public void run(){
         byte[] data;
         // Current version will prompt during every loop iteration however in future version with GUI
         // A dedicated text box will exist so the prompt is only displayed once
-        System.out.println("In order to shutdown the server, press (Y) during the prompt.");
+       
         for (;;){
 
             data = new byte[100];
@@ -62,18 +69,22 @@ public class TFTPServerListener extends TFTPHost {
 
             System.out.println("ServerListener: Waiting for packet.");
             // Block until a datagram packet is received from receiveSocket or the timeout expires
-            try {
-                receiveSocket.receive(receivePacket);
-            } catch (InterruptedIOException t){
-                //no request is received during tOut, the listener check the shutdown command.
-                System.out.println("No file transfer requested");
-                //checkStat();
-            }catch (IOException e) {
-                e.printStackTrace();
-                System.exit(1);
-            } 
+            while(timeout){
+	            try {
+	                receiveSocket.receive(receivePacket);
+	                timeout=false;
+	            } catch (InterruptedIOException t){
+	                //no request is received during tOut, the listener check the shutdown command.
+	                System.out.println("No file transfer requested");
+	                checkStat();
+	                timeout=true;
+	            }catch (IOException e) {
+	                e.printStackTrace();
+	                System.exit(1);
+	            } 
+        	}
             // Before creating a new thread, check if shutdown has been intitiated or not. 
-            //checkStat();
+            checkStat();
             // create a new thread to handle the file transfer request
             Thread handler=new Thread(new TFTPServerHandler(receivePacket));
             handler.start();
@@ -82,22 +93,10 @@ public class TFTPServerListener extends TFTPHost {
     }
 
     public void checkStat(){
-        String x;
-        // Ask to shutdown 
-        System.out.println("Shutdown the server? (Y|N)");
-        x = sc.next();
-        // If operator says yes then the server shutsdown as threads act independently of the server once created.
-        if (x.contains("Y")){
-            System.out.println("Server is now shutting down.");
-            sc.reset();
-            System.exit(0);
+        if (status==true){
+        	System.out.println("Server is now shutting down.");
+        	System.exit(1);
         }
-    }
-
-    public static void main( String args[] ) throws Exception
-    {
-        TFTPServerListener c = new TFTPServerListener(); 
-        c.Listen();
     }
 
 }

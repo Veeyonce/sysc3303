@@ -23,9 +23,10 @@ public class TFTPHost {
 
     Scanner sc;
     boolean verbose;
+    
     public void setShutdown() {
         shutdown = true;
-    } //does not work for client rn
+    } 
 
     public TFTPHost (){
         sc = new Scanner(System.in);
