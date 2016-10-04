@@ -155,7 +155,7 @@ public class TFTPServerHandler extends TFTPHost implements Runnable {
         try {
             in = new BufferedInputStream(new FileInputStream (filename));
             System.out.println(receivePacket.getPort());
-            super.read(in, sendReceiveSocket, receivePacket.getPort(), requestFormatRead);
+            super.read(in, sendReceiveSocket, receivePacket.getPort());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

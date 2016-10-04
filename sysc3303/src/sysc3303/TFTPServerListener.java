@@ -88,6 +88,7 @@ public class TFTPServerListener  extends Thread {
             // create a new thread to handle the file transfer request
             Thread handler=new Thread(new TFTPServerHandler(receivePacket));
             handler.start();
+            timeout=true;
         }
 
     }

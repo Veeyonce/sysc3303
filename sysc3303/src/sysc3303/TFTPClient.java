@@ -129,7 +129,7 @@ public class TFTPClient extends TFTPHost{
                         	sendPort = receivePacket.getPort();
                         	System.out.println(System.getProperty("user.dir"));
                             BufferedInputStream in = new BufferedInputStream(new FileInputStream(filename));
-                            read(in,sendReceiveSocket,sendPort, (byte)requestFormatRead);
+                            read(in,sendReceiveSocket,sendPort);
                             timeout = false;
                             in.close();
                     }

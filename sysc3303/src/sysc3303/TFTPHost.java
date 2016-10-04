@@ -43,9 +43,9 @@ public class TFTPHost {
         if (y<0) {
             y = 256+y;
         }
-        System.out.println((int) x);
+        /*System.out.println((int) x);
         System.out.println("-");
-        System.out.println((int)y);
+        System.out.println((int)y);*/
         return 256*x+y;
     }
 
@@ -171,7 +171,7 @@ public class TFTPHost {
      * reads data from the file in 512 byte chunks and sends them over the socket to the port
      * on localhost
      */
-    public void read(BufferedInputStream in, DatagramSocket sendReceiveSocket, int port, byte requestFormatRead) throws IOException {
+    public void read(BufferedInputStream in, DatagramSocket sendReceiveSocket,int port) throws IOException {
         int n;
         byte block1 = 0;
         byte block2 = 0;
@@ -224,7 +224,7 @@ public class TFTPHost {
                         //sendReceiveSocket.setSoTimeout(300);
                     	//error packet number
                         sendReceiveSocket.receive(receivePacket);
-                        System.out.print(receivePacket.getData());
+                        
                         if (!validate(receivePacket)) {
                             System.out.print("Invalid packet.");
                             printIncomingInfo(receivePacket, "ERROR", true);
@@ -244,7 +244,59 @@ public class TFTPHost {
 //                    System.out.println("ERROR: Acknowledge does not match block sent "+ parseBlock(receivePacket.getData()) + "    "+ parseBlock(message));
 //                    return;
 //                }
+                if ((n==-1) && sendPacket.getLength()==516){
+                	numberblock++;
+                    
+                    block1=(byte) (numberblock/256);
+                    block2=(byte) (numberblock%256);
+                    
+                    
+                    message = new byte[4];
+                    message[0] = 0;
+                    message[1] = 3;
+                    message[2] = block1;
+                    message[3] = block2;
+                    
+                    sendPacket = new DatagramPacket(message,n+4,InetAddress.getLocalHost(),port);
 
+                    
+                    
+                    try {
+                        sendReceiveSocket.send(sendPacket);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        System.exit(1);
+                    }
+                    
+                    printOutgoingInfo(sendPacket, "Read", verbose);
+                    
+                    receivePacket = new DatagramPacket(resp,4);
+                    
+                    timeout = true;
+                    while (timeout) {
+                        timeout = false;
+                        try {
+                            //sendReceiveSocket.setSoTimeout(300);
+                        	//error packet number
+                            sendReceiveSocket.receive(receivePacket);
+                            
+                            if (!validate(receivePacket)) {
+                                System.out.print("Invalid packet.");
+                                printIncomingInfo(receivePacket, "ERROR", true);
+                                System.exit(0);
+                            }
+                        } catch (SocketTimeoutException e) {
+                            timeout = true;
+                            if (shutdown) {
+                                System.exit(0);
+                            }
+                        }
+                    }
+     
+                    printIncomingInfo(receivePacket, "Read", verbose);
+                    
+                }
+                System.out.println("Read : File transfer ends" );
             }
             
             
