@@ -94,7 +94,7 @@ public class TFTPServerHandler extends TFTPHost implements Runnable {
         if (req==Request.READ) { // for Read it's 0301
             response = readResp;
         } else if (req==Request.WRITE) { // for Write it's 0400
-            response = writeResp;
+            response = writeResp;//ACK00
         } else { // it was invalid, just quit
             //throw new Exception("Not yet implemented");
         }
@@ -119,7 +119,7 @@ public class TFTPServerHandler extends TFTPHost implements Runnable {
         //     datagram, and use that as the destination port for the TFTP
         //     packet.
 
-        if (req==Request.WRITE) { 
+        if (req==Request.WRITE) { //if a write request is received the server must send ACK00
         	sendPacket = new DatagramPacket(response, response.length,
 	        receivePacket.getAddress(), receivePacket.getPort());
 	
@@ -141,20 +141,19 @@ public class TFTPServerHandler extends TFTPHost implements Runnable {
 
     public void run() {
         if (!readTransfer) {
-            write();
+            write();//server starts to write , the client must read on its side
         }
         else {
-            read();
+            read();//server starts to read and send data, client must write on its side
         }
-        System.out.println("File transfer finished");
+        System.out.println("File transfer finished => server handler close");
         sendReceiveSocket.close();
     } 
 
-    public void read() { 
+    public void read() { //first packet sent should be data01
         BufferedInputStream in;
         try {
             in = new BufferedInputStream(new FileInputStream (filename));
-            System.out.println(receivePacket.getPort());
             super.read(in, sendReceiveSocket, receivePacket.getPort());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -163,12 +162,11 @@ public class TFTPServerHandler extends TFTPHost implements Runnable {
         }
     }
 
-    public void write() {
+    public void write() {//the ACK00 has already been sent , so next packet send must be ack01 when receiving data01
         String newfile = "copy"+(filename); //appends copy because everything's in the same folder on the same computer right now
         BufferedOutputStream out;
         try {
             out = new BufferedOutputStream(new FileOutputStream(newfile));
-            sendReceiveSocket.send(sendPacket);
             super.write(out, sendReceiveSocket);
         } catch (IOException e) {
             e.printStackTrace();

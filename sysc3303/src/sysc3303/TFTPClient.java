@@ -107,14 +107,14 @@ public class TFTPClient extends TFTPHost{
         
         // Process the received datagram.
         while(!shutdown){
-            if (type==WRITE) {
+            if (type==WRITE) {//write request so the client must read on its side
                 try {
                     byte[] resp = new byte[4];
                     receivePacket = new DatagramPacket(resp,4);
-                    while (timeout) {
+                    while (timeout) {//wait to receive the ACK00
                         timeout = false;
                         try {
-                            sendReceiveSocket.setSoTimeout(10000);
+                        	//sendReceiveSocket.setSoTimeout(10000);
                             sendReceiveSocket.receive(receivePacket);
                         } catch (SocketTimeoutException e) {
                             timeout = true;
@@ -124,6 +124,7 @@ public class TFTPClient extends TFTPHost{
                         }
                     }
                     printIncomingInfo(receivePacket,"Client",verbose);
+                    //chheck if packet received is ack00
                     if (resp[0]==(byte)0 && resp[1]==(byte)4 && resp[2]==(byte)0 && resp[3]==(byte)0){
                         //ACK 0 received 
                         	sendPort = receivePacket.getPort();
@@ -146,7 +147,9 @@ public class TFTPClient extends TFTPHost{
                     e.printStackTrace();
                 }
             }
-            else if (type==READ) {
+            else if (type==READ) {//read request so the client must write on his side
+            	
+            	//here the client doesn't have to wait for ack00 start directly to write
                 filename = "copy".concat(filename); //avoid overwriting the existing file
                 try {
                 	
@@ -179,7 +182,7 @@ public class TFTPClient extends TFTPHost{
 
         result[0] =(byte) 0;
         result[1] = (byte) opcode;
-
+        System.out.println(opcode);
         System.arraycopy(filename,0,result,2,lf);
 
         result[lf+2] = 0;
