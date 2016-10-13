@@ -42,7 +42,7 @@ public void passOnTFTP()
 
    byte[] data;
    
-   int clientPort, j=0, len;
+   int clientPort,serverPort=69, j=0, len;
 
    for(;;) { // loop forever
       // Construct a DatagramPacket for receiving packets up
@@ -79,7 +79,7 @@ public void passOnTFTP()
       //  69 - the destination port number on the destination host.
 
       sendPacket = new DatagramPacket(data, len,
-                                     receivePacket.getAddress(), 69);
+                                     receivePacket.getAddress(), serverPort);
      
       printOutgoingInfo(sendPacket,"Simulator",verbose);
       len = sendPacket.getLength();
@@ -108,7 +108,7 @@ public void passOnTFTP()
          e.printStackTrace();
          System.exit(1);
       }
-
+      serverPort=receivePacket.getPort();
       printIncomingInfo(receivePacket,"Simulator",verbose);
       len = receivePacket.getLength();
       
