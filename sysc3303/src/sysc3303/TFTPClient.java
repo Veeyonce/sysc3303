@@ -15,7 +15,7 @@ public class TFTPClient extends TFTPHost{
     public static final int READ= 1; 
     public static final int WRITE = 2;
 
-    public static String DEFAULT_FILE_PATH = "src/sysc3303/files/";
+    public static String DEFAULT_FILE_PATH =System.getProperty("user.dir")+ "\\files\\";
     private String filePath;
     
     private int sendPort;
@@ -124,12 +124,12 @@ public class TFTPClient extends TFTPHost{
                         }
                     }
                     printIncomingInfo(receivePacket,"Client",verbose);
-                    //chheck if packet received is ack00
+                    //check if packet received is ack00
                     if (resp[0]==(byte)0 && resp[1]==(byte)4 && resp[2]==(byte)0 && resp[3]==(byte)0){
                         //ACK 0 received 
                         	sendPort = receivePacket.getPort();
                         	System.out.println(System.getProperty("user.dir"));
-                            BufferedInputStream in = new BufferedInputStream(new FileInputStream(filename));
+                            BufferedInputStream in = new BufferedInputStream(new FileInputStream(filePath+filename));
                             read(in,sendReceiveSocket,sendPort);
                             timeout = false;
                             in.close();
@@ -153,7 +153,7 @@ public class TFTPClient extends TFTPHost{
                 filename = "copy".concat(filename); //avoid overwriting the existing file
                 try {
                 	
-                    BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(filename));
+                    BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(filePath+filename));
                     write(out,sendReceiveSocket);
                     out.close();
 
@@ -242,28 +242,29 @@ public class TFTPClient extends TFTPHost{
 
     public static void main(String args[])
     {
-//    	Scanner s = new Scanner(System.in);
+    	Scanner s = new Scanner(System.in);
         TFTPClient c = new TFTPClient();
-//        while(true) {
-//        	System.out.println("------------------------------------------------------");
-//       	System.out.println("File path selection: \n");
-//			System.out.println("Enter the name of the file path for the Client to use (if * is typed then src/client/files/ will be used):");
+       while(true) {
+    	    System.out.println("------------------------------------------------------");
+    	    System.out.println("File path selection: \n");
+			System.out.println("Enter the name of the file path for the Client to use (if * is typed then user.dir/files/ will be used):");
 			
-//			c.filePath = s.next();
+			c.filePath = s.next();
 			
-//			if (c.filePath.trim().equals("*")) {
-//				c.filePath = DEFAULT_FILE_PATH;
-//			}
-//			s.reset();
-//			//Check that file path exists/is a valid directory
-//			if (new File(c.filePath).isDirectory()) {
-//				break;
-//			} else {
-//				System.out.println("File path does not exist or is not a directory, try again.");
-//			}
-//        }
+			if (c.filePath.trim().equals("*")) {
+				c.filePath = DEFAULT_FILE_PATH;
+				System.out.println(DEFAULT_FILE_PATH);
+			}
+			s.reset();
+			//Check that file path exists/is a valid directory
+			if (new File(c.filePath).isDirectory()) {
+				break;
+			} else {
+				System.out.println("File path does not exist or is not a directory, try again.");
+			}
+        }
         c.promptUser();
-//       s.close();
+       s.close();
     }
 }
 
